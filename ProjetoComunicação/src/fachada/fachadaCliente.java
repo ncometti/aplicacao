@@ -8,7 +8,7 @@ import negocios.MP3Player;
 public class fachadaCliente implements GuiCoreCliente{
 	String caminho;
 	FileInputStream in;
-	Thread musica;																																
+	Thread musica;
 	public fachadaCliente() throws FileNotFoundException, JavaLayerException {
 		in = new FileInputStream(caminho);
 		musica = new MP3Player(in);
