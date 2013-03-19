@@ -24,12 +24,14 @@ public class fachadaCliente implements GuiCoreCliente{
 	}
 
 	public void pausarPlayer() {
-		//musica.pauseSong();
+		/*if (MP3Player.musicaAtiva == true) {
+			((MP3Player) musica).pausar();
+		}*/
 		
 	}
 
 	public void reiniciarPlayer() {
-	
+		
 		
 	}
 
