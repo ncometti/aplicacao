@@ -1,77 +1,47 @@
 package negocios;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
 public class MP3Player extends Thread {
-	//status
-	private final static int NOTSTARTED = 0;
-	private final static int PLAYING = 1;
-	private final static int PAUSED = 2;
-	private final static int FINISHED = 3;
 
-	private Player p;
-	private int status;
-	private Object lock = new Object();
+// Objeto para nosso arquivo MP3 a ser tocado
+    private File mp3;
+// Objeto Player da biblioteca jLayer. Ele tocará o arquivo MP3
+    private Player player;
+    public static boolean musicaAtiva = false;
+    private int estado;
 
-	public MP3Player (FileInputStream in) throws JavaLayerException {
-		p = new Player(in);
+    public static boolean isMusicaAtiva() {
+		return musicaAtiva;
 	}
 
-	public void playSong() {
-		synchronized (lock) {
-			status = PLAYING;
-			lock.notifyAll();
-		}
+	public MP3Player(File mp3) {
+        this.mp3 = mp3;
+    }
 
+	public void setEstado(int estado) {
+		this.estado = estado;
 	}
-	public void resumeSong() {
-		synchronized (lock) {
-			if (status == PAUSED) {
-				status = PLAYING;
-				lock.notifyAll();
-			}
-		}
-	}
-	public void pauseSong() {
-		if (status == PLAYING)
-			status = PAUSED;
-	}
-
-	public void stopSong() {
-		synchronized (lock) {
-			status = FINISHED;
-			lock.notifyAll();
-		}
-		
-	}
-	public void run() {
-		try {
-			synchronized (lock) {
-				switch (status) {
-
-				case NOTSTARTED:
-					p.play();
-					break;
-
-				//case PAUSED:
-				//	resumeSong();
-				//	break;
-
-				case FINISHED:
-					p.close();
-					break;
-
-				}
-			}
-			
-		} catch (JavaLayerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
+    
+    public void run() {
+        try {
+            FileInputStream fis     = new FileInputStream(mp3);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            this.player = new Player(bis);
+            System.out.println("Tocando!");
+            musicaAtiva = true;
+            this.player.play();
+            System.out.println("Terminado!");
+            musicaAtiva = false;
+        } catch (Exception e) {
+            System.out.println("Problema ao tocar a música: " + mp3);
+            //e.printStackTrace();
+        }
+    }
 }
