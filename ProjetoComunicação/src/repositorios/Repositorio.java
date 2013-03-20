@@ -7,11 +7,17 @@ public interface Repositorio {
 
 	void inserir(Musica musica);
 
-	void remover(String musica);
+	void remover(String nomeArquivo);
 
-	boolean existe(String musica);
+	boolean existe(String nomeArquivo);
+	
+	Object procurarPorTitulo(String titulo);
+	
+	Object procurarPorArtista(String artista);
+	
+	Object procurarPorAlbum(String album);
 
-	Object atualizarLista(); // Object porque nao sabemos qual estrutura usar ainda
+//	Object atualizarLista(); // Object porque nao sabemos qual estrutura usar ainda
 
 
 
