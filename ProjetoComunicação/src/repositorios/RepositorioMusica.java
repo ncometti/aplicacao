@@ -130,4 +130,10 @@ public class RepositorioMusica implements Repositorio{
 		return vector;
 	}
 
+	@Override
+	public Object getLista() {
+		// TODO Auto-generated method stub
+		return vector;
+	}
+
 }

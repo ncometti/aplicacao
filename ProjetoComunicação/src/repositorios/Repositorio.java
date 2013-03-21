@@ -16,6 +16,8 @@ public interface Repositorio {
 	Object procurarPorArtista(String artista);
 	
 	Object procurarPorAlbum(String album);
+	
+	Object getLista();
 
 //	Object atualizarLista(); // Object porque nao sabemos qual estrutura usar ainda
 

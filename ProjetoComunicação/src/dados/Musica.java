@@ -12,20 +12,27 @@ public class Musica {
 	private String artista;
 	private String titulo;
 	private String album;
+	private String genero;
 	private String faixa;
+	private String duracao;
 	private String data;
 	private String copyright;
 	private String comentarios;
 	
+	
+
 
 	public Musica(File file, String artista, String titulo, String album,
-			String faixa, String data, String copyright, String comentarios) {
+			String genero, String faixa, String duracao, String data,
+			String copyright, String comentarios) {
 		super();
 		this.file = file;
 		this.artista = artista;
 		this.titulo = titulo;
 		this.album = album;
+		this.genero = genero;
 		this.faixa = faixa;
+		this.duracao = duracao;
 		this.data = data;
 		this.copyright = copyright;
 		this.comentarios = comentarios;
@@ -97,6 +104,22 @@ public class Musica {
 
 	public void setFaixa(String faixa) {
 		this.faixa = faixa;
+	}
+
+	public String getGenero() {
+		return genero;
+	}
+
+	public void setGenero(String genero) {
+		this.genero = genero;
+	}
+
+	public String getDuracao() {
+		return duracao;
+	}
+
+	public void setDuracao(String duracao) {
+		this.duracao = duracao;
 	}	
 
 }
