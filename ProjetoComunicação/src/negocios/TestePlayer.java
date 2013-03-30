@@ -31,7 +31,7 @@ public class TestePlayer {
 		
 		Gerenciador gerenciador = new Gerenciador("D:\\Users/Casa/Desktop/Comunicacao/TesteAplicacao/musicas"); // colocar o nome da pasta aqui
 		
-		final MP3player player = new MP3player((Vector<Musica>)gerenciador.getLista(), 1);
+		final MP3Player player = new MP3Player((Vector<Musica>)gerenciador.getLista(), 1);
 		Thread.sleep(100);
 //		System.out.println("asdasdast "+t);
 		final JProgressBar jPB = new JProgressBar(0,(int) player.getPlayer().getTotalDuration().toMillis());
