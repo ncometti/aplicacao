@@ -28,6 +28,11 @@ public class MP3Player {
 		currentMP3 = start;
 
 	}
+	
+	public void atualizarLista(Vector<Musica> playList) {
+		this.playList = playList;
+		currentMP3 = 0;
+	}
 
 	public Vector<Musica> getPlayList() {
 		return playList;
@@ -55,7 +60,6 @@ public class MP3Player {
 						setMusic(playList.get(currentMP3).getFile());
 						play();
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -74,13 +78,9 @@ public class MP3Player {
 			try {
 				currentMP3 = (++currentMP3) % playList.size();
 				setMusic(playList.get(currentMP3).getFile());
-				//play();
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			// TODO Auto-generated catch block
 		}
 
 	}
@@ -116,6 +116,14 @@ public class MP3Player {
 
 	public void pause() {
 		player.pause();
+	}
+	
+	public Duration getTempoAtual() {
+		return player.getCurrentTime();
+	}
+	
+	public double getVolume() {
+		return player.getVolume();
 	}
 
 	public String getCurrentTime() {
@@ -155,11 +163,14 @@ public class MP3Player {
 
 	public void setVolume(double value) {
 		player.setVolume(value);
-		System.out.println(value);
 	}
 	
 	public Musica getMusica() {
 		return playList.get(currentMP3);
+	}
+	
+	public void seek(Duration seek) {
+		player.seek(seek);
 	}
 
 }

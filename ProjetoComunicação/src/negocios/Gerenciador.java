@@ -28,7 +28,8 @@ public class Gerenciador {
 	 */
 
 	// TODO
-
+	
+	
 	private File dir;
 	private Repositorio repositorio;
 
@@ -48,7 +49,14 @@ public class Gerenciador {
 		atualizarLista();
 
 	}
-
+	
+	public void runClientService(){
+		
+		
+		
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	public Object atualizarLista() throws IOException, TagException,
 			UnsupportedAudioFileException {
