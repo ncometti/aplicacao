@@ -3,6 +3,7 @@ package fachada;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Vector;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -30,24 +31,29 @@ public class FachadaCliente implements GuiCoreCliente {
 
 	}
 
-	public void iniciarPlayer() {
+	public void conectClientToServer(String serverIP) {
+		try {
+			ger.conectClientToServer(serverIP);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
+	
+	
 
-	public void pausarPlayer() {
-		// musica.pauseSong();
-
-	}
-
-	public void reiniciarPlayer() {
-
-	}
-
-	public void cancelarPlayer() {
-
-	}
-
-	public void atualizarListaServidor() {
+	public Vector<Musica> atualizarListaServidor() {
+		try {
+			return ger.atualizaListaServidor();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 
 	}
 
@@ -140,15 +146,6 @@ public class FachadaCliente implements GuiCoreCliente {
 	public void setServerIP(String ip) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void press_play() {
-
-	}
-
-	@Override
-	public void press_pause() {
 	}
 
 	@Override

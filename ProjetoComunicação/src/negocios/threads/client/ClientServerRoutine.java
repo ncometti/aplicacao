@@ -7,7 +7,7 @@ import CamadaTransporte.In;
 import CamadaTransporte.Out;
 import CamadaTransporte.SRSocket;
 
-public class ClientServerRoutine implements Runnable{
+public class ClientServerRoutine{
 	private SRSocket socket;
 	private int serverSocketNumber;
 

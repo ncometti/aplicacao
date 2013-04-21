@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.util.Vector;
 
+import negocios.GerenciadorServidor;
+
 import CamadaTransporte.ControladorDownload;
 import CamadaTransporte.In;
 import CamadaTransporte.Out;
@@ -18,6 +20,8 @@ public class MainRoutineServer implements Runnable{
 	private int serverSocketNumber;
 
 	private int contSocket;
+	
+	GerenciadorServidor gServidor;
 
 	public MainRoutineServer(int serverSocketNumber) throws Exception{
 
@@ -26,6 +30,7 @@ public class MainRoutineServer implements Runnable{
 		serverSocket = new SRServerSocket(serverSocketNumber);
 		contSocket = serverSocketNumber+1;
 		
+		gServidor = new GerenciadorServidor();
 	}
 
 
@@ -43,8 +48,8 @@ public class MainRoutineServer implements Runnable{
 				// se nao deu erro ate aqui eh pq a conexão foi realizada com sucesso
 
 				
-				ControladorDownload controle = new ControladorDownload();
-				System.out.println("Porta asdjasoidjoiasjdajsdoas:"+controle.getUDPSocket().getLocalPort());
+//				ControladorDownload controle = new ControladorDownload();
+//				System.out.println("Porta asdjasoidjoiasjdajsdoas:"+controle.getUDPSocket().getLocalPort());
 				
 				
 			} catch (Exception e) {
@@ -53,19 +58,19 @@ public class MainRoutineServer implements Runnable{
 			
 			}
 			
-			
-			
-			
 
 			In in = new In(socket);
 			Out out = new Out(socket);
 			
 			try {
+				String comuniquei = (String) in.receberObjeto();
+				System.out.println(comuniquei);
+//				out.enviarTamanho(contSocket);
 				
-				out.enviarTamanho(contSocket);
-				ServerClientRoutine newClient = new ServerClientRoutine(contSocket++);
-				Thread threadClient = new Thread(newClient);
-				threadClient.start();
+				out.enviarObjeto(gServidor.getListaMusica());
+//				ServerClientRoutine newClient = new ServerClientRoutine(contSocket++);
+//				Thread threadClient = new Thread(newClient);
+//				threadClient.start();
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

@@ -1,27 +1,47 @@
 package negocios;
 
+import java.io.IOException;
 import java.util.Vector;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import org.farng.mp3.TagException;
 
 import negocios.threads.server.MainRoutineServer;
 
 import dados.Cliente;
 import dados.Download;
+import dados.Musica;
 import repositorios.RepositorioCliente;
 
 
 public class GerenciadorServidor {
 
 	private RepositorioCliente repoCliente;
-	
+	private Gerenciador gerenciador;
 	private Thread mainRoutine;
+	
+	private static int SERVER_NUMBER = 600;
 	
 	
 	public GerenciadorServidor() {
 		this.repoCliente = new RepositorioCliente();
+		try {
+			gerenciador = new Gerenciador("musicasServidor");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TagException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	public void runMainRoutine(){
-		mainRoutine = new Thread(new MainRoutineServer());
+	public void runMainRoutine() throws Exception{
+		mainRoutine = new Thread(new MainRoutineServer(SERVER_NUMBER));
 		mainRoutine.start();
 		
 	}
@@ -48,6 +68,21 @@ public class GerenciadorServidor {
 		repoCliente.removerCliente(cliente);
 	}
 	
+	public Vector<Musica> getListaMusica(){
+		try {
+			return (Vector<Musica>) gerenciador.atualizarLista();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TagException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	public Vector<Cliente> getLista(){
 		return repoCliente.getLista();

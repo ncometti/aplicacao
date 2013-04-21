@@ -14,13 +14,13 @@ public class Teste {
 		
 		
 		Thread server = new Thread(new MainRoutineServer(SERVER_NUMBER));
-		Thread client = new Thread(new MainRoutineClient("localhost", SERVER_NUMBER));
+//		Thread client = new Thread(new MainRoutineClient("localhost", SERVER_NUMBER));
 		
 		server.start();
 		Thread.sleep(100);
-		client.start();
-		Thread client1 = new Thread(new MainRoutineClient("localhost", SERVER_NUMBER));
-		client1.start();
+//		client.start();
+//		Thread client1 = new Thread(new MainRoutineClient("localhost", SERVER_NUMBER));
+//		client1.start();
 		
 		
 		

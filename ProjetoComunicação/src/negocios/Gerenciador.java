@@ -3,6 +3,8 @@ package negocios;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Vector;
 
@@ -11,9 +13,16 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 
+
+import negocios.threads.client.MainRoutineClient;
+
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagException;
 import org.farng.mp3.id3.AbstractID3v2;
+
+import CamadaTransporte.In;
+import CamadaTransporte.Out;
+import CamadaTransporte.SRSocket;
 
 import repositorios.Repositorio;
 import repositorios.RepositorioMusica;
@@ -32,7 +41,10 @@ public class Gerenciador {
 	
 	private File dir;
 	private Repositorio repositorio;
-
+	private MainRoutineClient clientService;
+	
+	private static int SERVER_NUMBER =600;
+	
 	// A Classe recebe a caminho da pasta ja correto pela GUI.
 	// Na criacao da classe gerenciador eh feita a primeira atualizacao do
 	// repositorio de acordo com o que ta na pasta
@@ -50,12 +62,21 @@ public class Gerenciador {
 
 	}
 	
-	public void runClientService(){
+	
+	public void conectClientToServer(String serverIP) throws UnknownHostException, Exception{
 		
-		
+		clientService = new MainRoutineClient(serverIP, SERVER_NUMBER);
+		clientService.stablishConecction();
 		
 		
 	}
+	
+	public Vector<Musica> atualizaListaServidor() throws Exception{
+		
+		return clientService.requestServerList();
+		
+	}
+
 	
 	@SuppressWarnings("unchecked")
 	public Object atualizarLista() throws IOException, TagException,

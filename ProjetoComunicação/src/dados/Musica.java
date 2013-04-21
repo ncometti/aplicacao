@@ -1,11 +1,14 @@
 package dados;
 
 import java.io.File;
+import java.io.Serializable;
 
-import javafx.beans.property.SimpleStringProperty;
+public class Musica implements Serializable{
 
-public class Musica {
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3097481877918715349L;
 	// Mais Atributos ainda a definir
 
 	// TODO Pesquisar como pegar as informacoes da musica pra usa-las como
@@ -23,11 +26,6 @@ public class Musica {
 	private String copyright;
 	private String comentarios;
 
-	private final SimpleStringProperty tituloProp;
-	private final SimpleStringProperty artistaProp;
-	private final SimpleStringProperty albumProp;
-	private final SimpleStringProperty generoProp;
-	private final SimpleStringProperty duracaoProp;
 
 	public Musica(File file, String artista, String titulo, String album,
 			String genero, String faixa, String duracao, String data,
@@ -43,32 +41,8 @@ public class Musica {
 		this.data = data;
 		this.copyright = copyright;
 		this.comentarios = comentarios;
-		this.tituloProp = new SimpleStringProperty(titulo);
-		this.artistaProp = new SimpleStringProperty(artista);
-		this.generoProp = new SimpleStringProperty(genero);
-		this.duracaoProp = new SimpleStringProperty(duracao);
-		this.albumProp = new SimpleStringProperty(album);
 	}
 
-	public String getTituloProp() {
-		return tituloProp.get();
-	}
-
-	public String getArtistaProp() {
-		return artistaProp.get();
-	}
-
-	public String getGeneroProp() {
-		return generoProp.get();
-	}
-
-	public String getDuracaoProp() {
-		return duracaoProp.get();
-	}
-
-	public String getAlbumProp() {
-		return albumProp.get();
-	}
 
 	public String getTitulo() {
 		return titulo;

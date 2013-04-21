@@ -7,15 +7,6 @@ import dados.Musica;
 public interface GuiCoreCliente {
 
 	// metodos relacionados ao player
-	void press_play(); // inicia, pausa ou retoma musica
-
-	void press_pause();
-
-	void press_stop(); // para a musica
-
-	void press_prox(); // passa para a proxima musica da lista
-
-	void press_ant(); // volta para a musica anterior
 
 	// metodos relacionados ao download
 	void iniciarDownload();
@@ -27,8 +18,10 @@ public interface GuiCoreCliente {
 	void cancelarDownload(); // cancela o download e apaga arquivo parcial
 
 	// metodos relacionados a lista de musicas
-	void atualizarListaServidor();
-
+	Vector<Musica> atualizarListaServidor();
+	
+	void conectClientToServer(String serverIP);
+	
 	Vector<Musica> atualizarListaCliente();
 
 	Vector<Musica> getLista();
