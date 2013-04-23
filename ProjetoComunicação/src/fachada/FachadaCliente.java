@@ -14,7 +14,6 @@ import org.farng.mp3.TagException;
 
 import dados.Musica;
 
-import javazoom.jl.decoder.JavaLayerException;
 import negocios.Gerenciador;
 import negocios.MP3Player;
 
@@ -24,7 +23,7 @@ public class FachadaCliente implements GuiCoreCliente {
 	private Thread musica;
 	private Gerenciador ger;
 
-	public FachadaCliente(String pasta) throws JavaLayerException, IOException,
+	public FachadaCliente(String pasta) throws IOException,
 			TagException, UnsupportedAudioFileException {
 
 		ger = new Gerenciador(pasta);
