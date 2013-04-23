@@ -65,7 +65,7 @@ public class Gerenciador {
 	
 	public void conectClientToServer(String serverIP) throws UnknownHostException, Exception{
 		
-		clientService = new MainRoutineClient(serverIP, SERVER_NUMBER);
+		clientService = new MainRoutineClient(serverIP);
 		clientService.stablishConecction();
 		
 		

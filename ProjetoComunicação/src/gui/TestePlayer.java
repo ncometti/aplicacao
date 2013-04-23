@@ -12,11 +12,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javazoom.jl.decoder.JavaLayerException;
 
-//import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Shell;
 import org.farng.mp3.TagException;
 
 import dados.Musica;
-import dados.MusicaSSP;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,7 +26,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -49,15 +47,10 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -71,26 +64,25 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import negocios.MP3Player;
 
-public class GUIjavaFX extends Application {
+public class TestePlayer extends Application {
 	private MP3Player mp3;
 	private GuiCoreCliente gcc;
 	private String pastaMusicas = "musicas";
-	private String musicaTocando = "Now Playing";
-	private TableView<MusicaSSP> tabelaMusicas;
-	private TableColumn<MusicaSSP, String> nameCol;
-	private TableColumn<MusicaSSP, String> artistCol;
-	private TableColumn<MusicaSSP, String> albumCol;
-	private TableColumn<MusicaSSP, String> genderCol;
-	private TableColumn<MusicaSSP, String> timeCol;
-	private final ObservableList<MusicaSSP> dataMusicas = FXCollections
+	private TableView<Musica> tabelaMusicas;
+	private TableColumn<Musica, String> nameCol;
+	private TableColumn<Musica, String> artistCol;
+	private TableColumn<Musica, String> albumCol;
+	private TableColumn<Musica, String> genderCol;
+	private TableColumn<Musica, String> timeCol;
+	private final ObservableList<Musica> dataMusicas = FXCollections
 			.observableArrayList();
-	private TableView<MusicaSSP> tabelaServidor;
-	private TableColumn<MusicaSSP, String> nameColServer;
-	private TableColumn<MusicaSSP, String> artistColServer;
-	private TableColumn<MusicaSSP, String> albumColServer;
-	private TableColumn<MusicaSSP, String> genderColServer;
-	private TableColumn<MusicaSSP, String> timeColServer;
-	private final ObservableList<MusicaSSP> dataServer = FXCollections
+	private TableView<Musica> tabelaServidor;
+	private TableColumn<Musica, String> nameColServer;
+	private TableColumn<Musica, String> artistColServer;
+	private TableColumn<Musica, String> albumColServer;
+	private TableColumn<Musica, String> genderColServer;
+	private TableColumn<Musica, String> timeColServer;
+	private final ObservableList<Musica> dataServer = FXCollections
 			.observableArrayList();
 
 	public class MediaControl extends BorderPane {
@@ -114,10 +106,9 @@ public class GUIjavaFX extends Application {
 				GUIjavaFX.class.getResourceAsStream("imagens\\play.png"));
 		private final Image PauseButtonImage = new Image(
 				GUIjavaFX.class.getResourceAsStream("imagens\\pause.png"));
-		ImageView imgPlay = new ImageView(PlayButtonImage);
-		ImageView imgPause = new ImageView(PauseButtonImage);
+		ImageView imageViewPlay = new ImageView(PlayButtonImage);
+		ImageView imageViewPause = new ImageView(PauseButtonImage);
 		private Pane mvPane;
-		private final Button playButton;
 
 		@Override
 		protected void layoutChildren() {
@@ -172,8 +163,7 @@ public class GUIjavaFX extends Application {
 		public MediaControl(Vector<Musica> playList, int start) {
 			this.playList = playList;
 			try {
-				if (playList.size() > 0)
-					setMusic(playList.get(start).getFile());
+				setMusic(playList.get(start).getFile());
 			} catch (MalformedURLException e1) {
 				e1.printStackTrace();
 			}
@@ -182,15 +172,15 @@ public class GUIjavaFX extends Application {
 			mvPane = new Pane();
 			mvPane.getChildren().add(mediaView);
 
-			mvPane.setStyle("-fx-background-color: white;");
+			mvPane.setStyle("-fx-background-color: black;");
 			setCenter(mvPane);
 			mediaBar = new HBox(5);
 			mediaBar.setPadding(new Insets(5, 10, 5, 10));
 			mediaBar.setAlignment(Pos.CENTER_LEFT);
 			BorderPane.setAlignment(mediaBar, Pos.CENTER);
 
-			playButton = ButtonBuilder.create().minWidth(Control.USE_PREF_SIZE)
-					.build();
+			final Button playButton = ButtonBuilder.create()
+					.minWidth(Control.USE_PREF_SIZE).build();
 			playButton.setStyle("-fx-background-color: transparent;");
 			Image backwardButtonImage = new Image(
 					GUIjavaFX.class.getResourceAsStream("imagens\\reverse.png"));
@@ -215,11 +205,19 @@ public class GUIjavaFX extends Application {
 			stopButton.setGraphic(imgStop);
 			stopButton.setStyle("-fx-background-color: transparent;");
 
-			playButton.setGraphic(imgPlay);
+			playButton.setGraphic(imageViewPlay);
 			playButton.setOnAction(new EventHandler<ActionEvent>() {
 				public void handle(ActionEvent e) {
 					updateValues();
-					play();
+					if (!isPlaying) {
+						isPlaying = true;
+						play();
+						playButton.setGraphic(imageViewPause);
+					} else {
+						isPlaying = false;
+						playButton.setGraphic(imageViewPlay);
+						pause();
+					}
 				}
 			});
 
@@ -229,8 +227,9 @@ public class GUIjavaFX extends Application {
 					duration = mp.getMedia().getDuration();
 					updateValues();
 					previous();
-					if (isPlaying)
-						mp.play();
+					if (isPlaying) {
+						play();
+					}
 				}
 			});
 
@@ -240,17 +239,9 @@ public class GUIjavaFX extends Application {
 					duration = mp.getMedia().getDuration();
 					updateValues();
 					next();
-					if (isPlaying)
-						mp.play();
-				}
-			});
-
-			stopButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent arg0) {
-					stop();
-					isPlaying = false;
-					playButton.setGraphic(imgPlay);
+					if (isPlaying) {
+						play();
+					}
 				}
 			});
 
@@ -261,7 +252,7 @@ public class GUIjavaFX extends Application {
 			musicName = new Label();
 			musicName.setMinWidth(Control.USE_PREF_SIZE);
 			mediaBar.getChildren().add(musicName);
-			musicName.setText("Now Playing");
+			musicName.setText(playList.get(currentMP3).getTitulo());
 
 			// SLIDE MUSICA
 			timeSlider = SliderBuilder.create().minWidth(30)
@@ -274,6 +265,7 @@ public class GUIjavaFX extends Application {
 							mp.seek(duration.multiply(timeSlider.getValue() / 100.0));
 						}
 						updateValues();
+
 					}
 				}
 			});
@@ -335,10 +327,6 @@ public class GUIjavaFX extends Application {
 							if (volumeSlider.isValueChanging()) {
 								volumeButton.setGraphic(imgVolume);
 								isMuted = false;
-								if (volumeSlider.getValue() == 0) {
-									volumeButton.setGraphic(imgMute);
-									isMuted = true;
-								}
 								mp.setVolume(volumeSlider.getValue() / 100.0);
 							}
 						}
@@ -368,7 +356,7 @@ public class GUIjavaFX extends Application {
 							volumeSlider.setValue((int) Math.round(mp
 									.getVolume() * 100));
 						}
-						musicName.setText(musicaTocando);
+						musicName.setText(playList.get(currentMP3).getTitulo());
 					}
 				});
 			}
@@ -426,8 +414,6 @@ public class GUIjavaFX extends Application {
 						try {
 							currentMP3 = (++currentMP3) % playList.size();
 							setMusic(playList.get(currentMP3).getFile());
-							musicaTocando = playList.get(currentMP3).getTitulo();
-							isPlaying = false;
 							play();
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
@@ -445,37 +431,59 @@ public class GUIjavaFX extends Application {
 							updateValues();
 						}
 					});
+			mp.setOnPlaying(new Runnable() {
+				public void run() {
 
+					if (stopRequested) {
+						pause();
+						stopRequested = false;
+					} else {
+						// playButton.setGraphic(imageViewPause);
+					}
+				}
+			});
+			mp.setOnPaused(new Runnable() {
+				public void run() {
+
+					// playButton.setGraphic(imageViewPlay);
+				}
+			});
 			mp.setOnReady(new Runnable() {
 				public void run() {
 					duration = mp.getMedia().getDuration();
 					updateValues();
 				}
 			});
+
+			// mp.setOnEndOfMedia(new Runnable() {
+			// public void run() {
+			// if (!repeat) {
+			// //playButton.setGraphic(imageViewPlay);
+			// stopRequested = true;
+			// atEndOfMedia = true;
+			// }
+			// }
+			// });
 		}
 
 		public void next() {
 			if (playList != null) {
+				stop();
 				try {
-					boolean aux = isPlaying;
-					stop();
-					isPlaying = aux;
 					updateValues();
 					currentMP3 = (++currentMP3) % playList.size();
 					setMusic(playList.get(currentMP3).getFile());
-					musicaTocando = playList.get(currentMP3).getTitulo();
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				}
 			}
+
 		}
 
 		public void previous() {
 			if (playList != null) {
 				try {
-					boolean aux = isPlaying;
 					stop();
-					isPlaying = aux;
 					updateValues();
 					if (currentMP3 == 0) {
 						currentMP3 = playList.size() - 1;
@@ -483,7 +491,6 @@ public class GUIjavaFX extends Application {
 						--currentMP3;
 					}
 					setMusic(playList.get(currentMP3).getFile());
-					musicaTocando = playList.get(currentMP3).getTitulo();
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				}
@@ -491,25 +498,18 @@ public class GUIjavaFX extends Application {
 		}
 
 		public void play() {
-			if (!isPlaying) {
-				isPlaying = true;
-				mp.play();
-				musicaTocando = playList.get(currentMP3).getTitulo();
-				updateValues();
-				playButton.setGraphic(imgPause);
-			} else {
-				isPlaying = false;
-				playButton.setGraphic(imgPlay);
-				mp.pause();
-				musicaTocando = playList.get(currentMP3).getTitulo();
-				updateValues();
-			}
+			mp.play();
+			updateValues();
 
 		}
 
 		public void stop() {
 			mp.stop();
-			isPlaying = false;
+			updateValues();
+		}
+
+		public void pause() {
+			mp.pause();
 			updateValues();
 		}
 
@@ -518,45 +518,16 @@ public class GUIjavaFX extends Application {
 			currentMP3 = 0;
 		}
 
-		public void setMusic(String str) {
-			int i = 0;
-			try {
-				stop();
-				while(i < playList.size() && !str.equals(playList.get(i).getFile().getName())) {
-					i++;
-				}
-				currentMP3 = i;
-				setMusic(playList.get(currentMP3).getFile());
-				musicaTocando = playList.get(currentMP3).getTitulo();
-				play();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		public HBox getBox() {
-			return this.mediaBar;
-		}
-
-		
-	}//fim do mediaControl
+	}
 
 	private void atualizarLista(MediaControl mediaControl) {
 		dataMusicas.clear();
 		tabelaMusicas.setItems(dataMusicas);
 		Vector<Musica> vector = gcc.atualizarListaCliente();
-
 		mediaControl.atualizarLista(vector);
-		if (vector.size() > 0) {
-			try {
-				mediaControl.setMusic(vector.get(0).getFile());
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}
 
 		for (int i = 0; i < vector.size(); i++) {
-			dataMusicas.add(new MusicaSSP(vector.get(i)));
+			dataMusicas.add(vector.get(i));
 		}
 
 		tabelaMusicas.setItems(dataMusicas);
@@ -564,23 +535,19 @@ public class GUIjavaFX extends Application {
 
 	private void atualizarListaServidor() {
 		dataServer.clear();
-		Vector<Musica> vector = gcc.atualizarListaServidor(); // recebe lista do servidor
+		Vector<Musica> vector; // recebe lista do servidor
 
-		for(int i = 0; i < vector.size(); i++) {
-			//		 insere o que tem no vector no dataServer
-			dataServer.add(new MusicaSSP(vector.get(i)));
-		}
-		tabelaServidor.setItems(dataServer);
-	}
-	
-	private void download(String nomeMusica) {
-		gcc.iniciarDownload(nomeMusica);
+		// for(int i = 0; i < vector.size(); i++) {
+		// insere o que tem no vector no dataServer
+		// dataServer.add(vector.get(i));
+		// }
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		try {
 			gcc = new FachadaCliente(pastaMusicas);
+			// mp3 = new MP3Player(gcc.getLista(), 0);
 		} catch (JavaLayerException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -590,11 +557,6 @@ public class GUIjavaFX extends Application {
 		} catch (UnsupportedAudioFileException e) {
 			e.printStackTrace();
 		}
-
-//		InitialDialogFX teste = new InitialDialogFX();
-//		teste.start(stage);
-		
-		gcc.conectClientToServer("localhost");
 
 		// InitialDialog inicio = new InitialDialog(new Shell(), 0, gcc);
 		// inicio.open();
@@ -618,12 +580,6 @@ public class GUIjavaFX extends Application {
 			}
 		});
 		MenuItem attServidor = new MenuItem("Atualizar Servidor");
-		attServidor.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				atualizarListaServidor();
-			}
-		});
 		MenuItem sair = new MenuItem("Sair");
 		sair.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -642,25 +598,14 @@ public class GUIjavaFX extends Application {
 		sobreHelp.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				// SobreDialog sobreDialog = new SobreDialog(new Shell(), 0);
-				// sobreDialog.open();
+				SobreDialog sobreDialog = new SobreDialog(new Shell(), 0);
+				sobreDialog.open();
 			}
 		});
 		helpMenu.getItems().add(sobreHelp);
 		menuBar.getMenus().addAll(arquivoMenu, editarMenu, helpMenu);
 
 		// =====================================================
-		
-		final TextField busca = new TextField();
-		busca.setLayoutX(cena.getWidth() - 150);
-		busca.textProperty().addListener(new ChangeListener<String>() {
-	        @Override
-	        public void changed(ObservableValue<? extends String> observable,
-	                            String oldValue, String newValue) {
-	            buscarMusica(busca.getText(), mediaControl);
-	        }
-	    });
-		busca.setTooltip(new Tooltip("Digite o nome da música ou artista"));
 
 		// =================== TABPANE =========================
 		TabPane tabs = new TabPane();
@@ -668,58 +613,45 @@ public class GUIjavaFX extends Application {
 		tabs.setPrefHeight(520);
 		tabs.prefWidthProperty().bind(cena.widthProperty());
 		tabs.setSide(Side.LEFT);
-		tabs.prefHeightProperty().bind(mediaControl.getBox().layoutYProperty().subtract(24));
 
 		Tab tabMusicas = new Tab("Musicas");
 		tabMusicas.setClosable(false);
 		Tab tabServer = new Tab("Servidor");
-		FlowPane flowPane = new FlowPane();
-		
-		
-		MenuBar menuServer = new MenuBar();
-		Menu downloadMenu = new Menu("Download");
-		Menu pauseMenu = new Menu("Pause");
-		Menu stopMenu = new Menu("Parar");
-		menuServer.getMenus().addAll(downloadMenu, pauseMenu, stopMenu);
-		
-		
 		tabServer.setClosable(false);
 
 		tabs.getTabs().addAll(tabMusicas, tabServer);
 
-		tabelaMusicas = new TableView<MusicaSSP>();
+		tabelaMusicas = new TableView<Musica>();
 		tabelaMusicas.setEditable(false);
 
-		nameCol = new TableColumn<MusicaSSP, String>("Nome");
+		nameCol = new TableColumn<Musica, String>("Nome");
 		nameCol.setMinWidth(200);
 		nameCol.setResizable(true);
-		nameCol.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
+		nameCol.setCellValueFactory(new PropertyValueFactory<Musica, String>(
 				"tituloProp"));
 
-		artistCol = new TableColumn<MusicaSSP, String>("Artista");
+		artistCol = new TableColumn<Musica, String>("Artista");
 		artistCol.setMinWidth(190);
 		artistCol.setResizable(true);
-		artistCol
-				.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
-						"artistaProp"));
+		artistCol.setCellValueFactory(new PropertyValueFactory<Musica, String>(
+				"artistaProp"));
 
-		albumCol = new TableColumn<MusicaSSP, String>("Album");
+		albumCol = new TableColumn<Musica, String>("Album");
 		albumCol.setMinWidth(180);
 		albumCol.setResizable(true);
-		albumCol.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
+		albumCol.setCellValueFactory(new PropertyValueFactory<Musica, String>(
 				"albumProp"));
 
-		genderCol = new TableColumn<MusicaSSP, String>("Gênero");
+		genderCol = new TableColumn<Musica, String>("Gênero");
 		genderCol.setMinWidth(180);
 		genderCol.setResizable(true);
-		genderCol
-				.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
-						"generoProp"));
+		genderCol.setCellValueFactory(new PropertyValueFactory<Musica, String>(
+				"generoProp"));
 
-		timeCol = new TableColumn<MusicaSSP, String>("Duração");
+		timeCol = new TableColumn<Musica, String>("Duração");
 		timeCol.setMinWidth(100);
 		timeCol.setResizable(true);
-		timeCol.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
+		timeCol.setCellValueFactory(new PropertyValueFactory<Musica, String>(
 				"duracaoProp"));
 
 		atualizarLista(mediaControl);
@@ -729,82 +661,51 @@ public class GUIjavaFX extends Application {
 		tabelaMusicas.getColumns().add(genderCol);
 		tabelaMusicas.getColumns().add(timeCol);
 
-		tabelaMusicas.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-					if (mouseEvent.getClickCount() == 2) {
-						if (tabelaMusicas.getSelectionModel().getSelectedItem() != null) {
-							mediaControl.setMusic(tabelaMusicas
-									.getSelectionModel().getSelectedItem().getNomeMusica());
-						}
-					}
-				}
-			}
-		});
 		tabMusicas.setContent(tabelaMusicas);
 
-		tabelaServidor = new TableView<MusicaSSP>();
+		tabelaServidor = new TableView<Musica>();
 
-		nameColServer = new TableColumn<MusicaSSP, String>("Nome");
+		nameColServer = new TableColumn<Musica, String>("Nome");
 		nameColServer.setMinWidth(200);
 		nameColServer.setResizable(true);
 		nameColServer
-				.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
+				.setCellValueFactory(new PropertyValueFactory<Musica, String>(
 						"tituloProp"));
 
-		artistColServer = new TableColumn<MusicaSSP, String>("Artista");
+		artistColServer = new TableColumn<Musica, String>("Artista");
 		artistColServer.setMinWidth(190);
 		artistColServer.setResizable(true);
 		artistColServer
-				.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
+				.setCellValueFactory(new PropertyValueFactory<Musica, String>(
 						"artistaProp"));
 
-		albumColServer = new TableColumn<MusicaSSP, String>("Album");
+		albumColServer = new TableColumn<Musica, String>("Album");
 		albumColServer.setMinWidth(180);
 		albumColServer
-				.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
+				.setCellValueFactory(new PropertyValueFactory<Musica, String>(
 						"albumProp"));
 
-		genderColServer = new TableColumn<MusicaSSP, String>("Gênero");
+		genderColServer = new TableColumn<Musica, String>("Gênero");
 		genderColServer.setMinWidth(180);
 		genderColServer.setResizable(true);
 		genderColServer
-				.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
+				.setCellValueFactory(new PropertyValueFactory<Musica, String>(
 						"generoProp"));
 
-		timeColServer = new TableColumn<MusicaSSP, String>("Duração");
+		timeColServer = new TableColumn<Musica, String>("Duração");
 		timeColServer.setMinWidth(100);
 		timeColServer.setResizable(true);
 		timeColServer
-				.setCellValueFactory(new PropertyValueFactory<MusicaSSP, String>(
+				.setCellValueFactory(new PropertyValueFactory<Musica, String>(
 						"duracaoProp"));
-		
-		tabelaServidor.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-					if (mouseEvent.getClickCount() == 2) {
-						if (tabelaMusicas.getSelectionModel().getSelectedItem() != null) {
-							download(tabelaMusicas.getSelectionModel().getSelectedItem().getNomeMusica());
-						}
-					}
-				}
-			}
-		});
 
 		tabelaServidor.getColumns().addAll(nameColServer, artistColServer,
 				albumColServer, genderColServer, timeColServer);
 
-		flowPane.getChildren().addAll(menuServer, tabelaServidor);
-		menuServer.prefWidthProperty().bind(flowPane.widthProperty());
-		menuServer.setStyle("-fx-background-color: #939096;");
-		tabelaServidor.prefHeightProperty().bind(flowPane.heightProperty());
-		tabServer.setContent(flowPane);
-		
+		tabServer.setContent(tabelaServidor);
+
 		raiz.getChildren().add(mediaControl);
 		raiz.getChildren().add(menuBar);
-		raiz.getChildren().add(busca);
 		raiz.getChildren().add(tabs);
 		stage.setScene(cena);
 		stage.setTitle("muzika");
@@ -812,17 +713,6 @@ public class GUIjavaFX extends Application {
 				.add(new Image(getClass().getResourceAsStream(
 						"imagens\\clave.png")));
 		stage.show();
-	}
-	
-	private void buscarMusica(String str, MediaControl mediaControl) {
-		Vector<Musica> vector = gcc.buscarListaCliente(str);
-		mediaControl.atualizarLista(vector);
-		ObservableList<MusicaSSP> dataBusca = FXCollections.observableArrayList();
-		
-		for(int i = 0; i < vector.size(); i++) {
-			dataBusca.add(new MusicaSSP(vector.get(i)));
-		}
-		tabelaMusicas.setItems(dataBusca);
 	}
 
 	public static void main(String[] args) {

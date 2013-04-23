@@ -21,8 +21,6 @@ public class GerenciadorServidor {
 	private Gerenciador gerenciador;
 	private Thread mainRoutine;
 	
-	private static int SERVER_NUMBER = 600;
-	
 	
 	public GerenciadorServidor() {
 		this.repoCliente = new RepositorioCliente();
@@ -41,7 +39,7 @@ public class GerenciadorServidor {
 	}
 
 	public void runMainRoutine() throws Exception{
-		mainRoutine = new Thread(new MainRoutineServer(SERVER_NUMBER));
+		mainRoutine = new Thread(new MainRoutineServer());
 		mainRoutine.start();
 		
 	}

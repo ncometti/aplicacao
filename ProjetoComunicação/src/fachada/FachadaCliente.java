@@ -101,8 +101,8 @@ public class FachadaCliente implements GuiCoreCliente {
 
 	}
 
-	public void iniciarDownload() {
-		// TODO Auto-generated method stub
+	public void iniciarDownload(String nomeMusica) {
+		
 
 	}
 

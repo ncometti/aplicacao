@@ -26,7 +26,15 @@ public class Out {
 		enviarTamanho(send.length);
 		UDPSocket.enviar(send);
 	}
-
+	
+	public void enviarArquivo (byte[] sendStream, ControladorDownload controle) throws Exception {
+		In in= new In(UDPSocket);
+		int newPort = in.receberPorta();
+		enviarPorta(controle.getUDPSocket().getLocalPort());
+		enviarTamanho(sendStream.length);
+		UDPSocket.enviarFile(sendStream, 0, newPort, controle);
+	}
+	
 	static byte[] convertToByte(int valor, int numeroBytes) {
 		byte[] bytes = new byte[numeroBytes];
 		for (int i = 0; i < numeroBytes; i++) {

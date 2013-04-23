@@ -13,22 +13,19 @@ import CamadaTransporte.SRServerSocket;
 import CamadaTransporte.SRSocket;
 
 public class MainRoutineServer implements Runnable{
-
+	
+	public static int SERVER_NUMBER = 60000;
 
 	private SRServerSocket serverSocket;
 	private SRSocket socket;
-	private int serverSocketNumber;
 
-	private int contSocket;
 	
 	GerenciadorServidor gServidor;
 
-	public MainRoutineServer(int serverSocketNumber) throws Exception{
+	public MainRoutineServer() throws Exception{
 
-		this.serverSocketNumber= serverSocketNumber;
 
-		serverSocket = new SRServerSocket(serverSocketNumber);
-		contSocket = serverSocketNumber+1;
+		serverSocket = new SRServerSocket(SERVER_NUMBER);
 		
 		gServidor = new GerenciadorServidor();
 	}
@@ -58,19 +55,13 @@ public class MainRoutineServer implements Runnable{
 			
 			}
 			
-
-			In in = new In(socket);
-			Out out = new Out(socket);
+			System.out.println("cheguei aqui");
 			
 			try {
-				String comuniquei = (String) in.receberObjeto();
-				System.out.println(comuniquei);
-//				out.enviarTamanho(contSocket);
 				
-				out.enviarObjeto(gServidor.getListaMusica());
-//				ServerClientRoutine newClient = new ServerClientRoutine(contSocket++);
-//				Thread threadClient = new Thread(newClient);
-//				threadClient.start();
+				ServerClientRoutine newClient = new ServerClientRoutine(socket, gServidor);
+				Thread threadClient = new Thread(newClient);
+				threadClient.start();
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

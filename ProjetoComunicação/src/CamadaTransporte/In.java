@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 
 public class In {
 	SRSocket UDPSocket;
+	
 
 	public In(SRSocket UDPSocket) {
 		this.UDPSocket = UDPSocket;
@@ -24,12 +25,21 @@ public class In {
 
 		return byteToInt2(recive);
 	}
-
+	
 	public Object receberObjeto() throws Exception {
 		int tamanho = receberTamanho();
-		byte[] recive = new byte[tamanho];
-		UDPSocket.receber(recive);
-		return deserialize(recive);
+		byte[] receive = new byte[tamanho];
+		UDPSocket.receber(receive);
+		return deserialize(receive);
+	}
+	
+	public void receberArquivo (byte[] receiveStream, ControladorDownload controle) throws Exception {
+		Out out = new Out(UDPSocket);
+
+		out.enviarPorta(controle.getUDPSocket().getLocalPort());
+		int newPort = receberPorta();
+		int tamanho = receberTamanho();
+		UDPSocket.receberFile(receiveStream, controle, newPort);
 	}
 
 	static int byteToInt2(byte[] b) {

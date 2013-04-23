@@ -9,7 +9,7 @@ public interface GuiCoreCliente {
 	// metodos relacionados ao player
 
 	// metodos relacionados ao download
-	void iniciarDownload();
+	void iniciarDownload(String fileName);
 
 	void pausarDownload();
 
