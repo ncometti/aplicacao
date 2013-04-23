@@ -10,7 +10,6 @@ import java.util.Vector;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import javazoom.jl.decoder.JavaLayerException;
 
 //import org.eclipse.swt.widgets.Shell;
 import org.farng.mp3.TagException;
@@ -581,8 +580,6 @@ public class GUIjavaFX extends Application {
 	public void start(Stage stage) throws Exception {
 		try {
 			gcc = new FachadaCliente(pastaMusicas);
-		} catch (JavaLayerException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (TagException e) {
